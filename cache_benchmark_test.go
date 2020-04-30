@@ -82,3 +82,26 @@ func BenchmarkCache_Size(b *testing.B) {
 	})
 	b.ReportAllocs()
 }
+
+func BenchmarkCache_All(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		all := NewCache()
+		for i := 0; i < 50; i++ {
+			all.Set("all"+string(i), i)
+		}
+		for pb.Next() {
+			all.All()
+		}
+	})
+
+	b.RunParallel(func(pb *testing.PB) {
+		all := NewCache()
+		for i := 0; i < 10; i++ {
+			all.Set("all"+string(i), i)
+		}
+		for pb.Next() {
+			all.All()
+		}
+	})
+	b.ReportAllocs()
+}

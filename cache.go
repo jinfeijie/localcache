@@ -25,6 +25,7 @@ func (c *Cache) Get(key string) interface{} {
 }
 
 // 如果不存在，就设置，并且返回设置的值
+// 如果存在就返回原来的值，val不生效
 func (c *Cache) GetOrSet(key string, val interface{}) interface{} {
 	if ac, ok := c.m.LoadOrStore(key, val); ok {
 		return ac
@@ -47,4 +48,14 @@ func (c *Cache) Size() (len int) {
 		return true
 	})
 	return len
+}
+
+// 获取里面所有的元素，性能很低，使用时需要注意
+func (c *Cache) All() (all map[string]interface{}) {
+	all = make(map[string]interface{})
+	c.m.Range(func(key, value interface{}) bool {
+		all[key.(string)] = value
+		return true
+	})
+	return
 }
